@@ -14,6 +14,7 @@ from pygame.locals import *
 import pygame.gfxdraw
 from config import *
 from rank import *
+from ctrl import *
 
 cfg = Config.instance()
 pygame.init()
@@ -24,6 +25,7 @@ screen = pygame.display.set_mode([cfg.SCREEN_WIDTH, cfg.SCREEN_HEIGHT], cfg.CONF
 pygame.display.set_caption(cfg.TITLE)
 font = pygame.font.Font('lib/SimHei.ttf', 18)
 workList = list()
+spc = speedControl(100, 50, screen)
 
 if __name__ == "__main__":
     sector = sys.argv[1]
@@ -33,7 +35,7 @@ if __name__ == "__main__":
 
     db= dashboard([screen, font])
     db.loadData(sector)
-    workList = [db.update, db.show]
+    workList = [db.update, db.show, spc.show]
     bef = time.time()
 
     while True:
@@ -48,8 +50,10 @@ if __name__ == "__main__":
             fun()
 
         pygame.display.update()
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            spc.checkMouseMove(event)
+            cfg.TIME_SPEED = spc._speed * 4
