@@ -18,7 +18,8 @@ from rank import *
 cfg = Config.instance()
 pygame.init()
 
-cfg.setScreenSize(pygame.display.Info().current_w, pygame.display.Info().current_h)
+#cfg.setScreenSize(pygame.display.Info().current_w, pygame.display.Info().current_h)
+cfg.setScreenSize(1024, 768)
 screen = pygame.display.set_mode([cfg.SCREEN_WIDTH, cfg.SCREEN_HEIGHT], cfg.CONFIG)
 pygame.display.set_caption(cfg.TITLE)
 font = pygame.font.Font('lib/SimHei.ttf', 18)
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     while True:
         while(time.time() - bef < 0.04):
             pass
-        # print(time.time() - bef)
+        print(time.time() - bef)
         bef = time.time()
 
         screen.fill(cfg.BGCOLOR)

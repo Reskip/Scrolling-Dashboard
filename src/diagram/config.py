@@ -36,7 +36,7 @@ class Config(object):
         self.AUXLINE_INTERVAL_SCOR = [100, 200]
         self.AUXLINE_WIDTH_SCOR = [2, 3]
 
-        self.BOX_MOV_RATIO = 0.01
+        self.BOX_MOV_RATIO = 0.3
         self.MID_MOV_SPEED = 0.01
 
         self.TIME_SPEED = 20.0

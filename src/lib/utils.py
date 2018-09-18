@@ -50,9 +50,14 @@ def sig(x1, y1, x2, y2, t):
     return y
 
 def slope(x1, y1, x2, y2, t):
-    dx = 0.01
-    dy = sig(x1, y1, x2, y2, t + dx) - sig(x1, y1, x2, y2, t)
-    return dy / dx
+    dy = sig(x1, y1, x2, y2, t + 1) - sig(x1, y1, x2, y2, t)
+    return dy
+
+def stdRate(rate):
+    if abs(rate) > 0.5:
+        rate /= abs(rate)
+        rate *= 0.5
+    return rate
 
 if __name__ == "__main__":
     stamp = date2Stamp("2018052007")

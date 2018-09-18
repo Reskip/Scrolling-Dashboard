@@ -4,6 +4,7 @@ import pygame.gfxdraw
 import random
 import pygame
 import math
+import copy
 import numpy as np
 import sys
 import os
@@ -27,6 +28,8 @@ def randColor():
     return color[random.randint(0, len(color) - 1)]
 
 def drawLine(screen, color, start, end, width):
+    if start == end:
+        return
     width /= 2.0
     start = np.array(start)
     end = np.array(end)
@@ -39,6 +42,7 @@ def drawLine(screen, color, start, end, width):
     end -= dirx * width
 
     points = [start, end, point2, point1]
+
     pygame.gfxdraw.filled_polygon(screen, points, color)
     pygame.gfxdraw.aapolygon(screen, points, color)
     # print(points)
@@ -80,7 +84,8 @@ class user(object):
     def bling(self):
         if self._visual == False:
             return
-        if self._blingTime <= 0.0:
+        if self._blingTime <= 0.001:
+            self._blingTime = 0
             return
         
         blingTime = 1.0 - self._blingTime
@@ -170,7 +175,8 @@ class user(object):
         if self._lastPoint != None and len(self._data._lst) != 0:
             self._score = sig(self._lastPoint._value, self._lastPoint._score, self._data._lst[0]._value, self._data._lst[0]._score, now)
             slopeValue = slope(self._lastPoint._value, self._lastPoint._score, self._data._lst[0]._value, self._data._lst[0]._score, now)
-            if slopeValue > 0.04 and self._blingTime <= 0.0:
+
+            if slopeValue * 10000 >  self._db._scoreRange and self._blingTime <= 0.0:
                 self._blingTime = 1.0
                 self._db._blingList.append(self)
 
@@ -196,6 +202,7 @@ class dashboard(object):
         self._maxDate = 300
         self._minScore = -100
         self._maxScore = 100
+        self._scoreRange = 200
 
         self._nowDate = 0
 
@@ -250,10 +257,12 @@ class dashboard(object):
 
             if befDelta > delta * 2.0:
                 rate = ((befDelta / delta) - 2.0) * cfg.BOX_MOV_RATIO   #线性插值变化率
+                rate = stdRate(rate)
                 minScore += minDelta * rate
                 maxScore += maxDelta * rate
             elif befDelta < delta * 1.5:
                 rate = (1.5 - (befDelta / delta)) * cfg.BOX_MOV_RATIO
+                rate = stdRate(rate)
                 minScore -= minDelta * rate
                 maxScore -= maxDelta * rate
             
@@ -262,7 +271,7 @@ class dashboard(object):
 
         self._minScore = minScore
         self._maxScore = maxScore
-        
+
         self._users.sort(key = lambda u: u._score, reverse = True)
         cnt = 0
         for u in self._users:
@@ -272,6 +281,7 @@ class dashboard(object):
             if cnt < cfg.TOP and u._update == True and u._visual == False:
                 u._visual = True
                 cnt += 1
+        self._scoreRange = self._maxScore - self._minScore
     
     def rands(self):
         if random.randint(0, cfg.RANDSRATE) == 0:
@@ -292,6 +302,7 @@ class dashboard(object):
         
         for b in self._blingList:
             if b._blingTime <= 0.0:
+                self._blingTime = 0.0
                 self._blingList.remove(b)
 
     def name(self):
